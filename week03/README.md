@@ -14,4 +14,4 @@ Reactで作られたフロントエンド、Spring Bootで構築されたバッ�
 
 Google Driveからダウンロードできます：
 
- [StepTodoAppダウンロード（Google Drive）]([https://drive.google.com/steptodoapp](https://drive.google.com/file/d/1QBHThNkDT_jiFCqG3a-w9tATFbYCegzq/view?usp=sharing))
+ [StepTodoAppダウンロード（Google Drive）](https://drive.google.com/file/d/1QBHThNkDT_jiFCqG3a-w9tATFbYCegzq/view?usp=sharing)
