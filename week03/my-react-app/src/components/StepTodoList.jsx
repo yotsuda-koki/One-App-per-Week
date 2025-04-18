@@ -14,6 +14,7 @@ import {
   createTheme,
   ThemeProvider,
   Dialog,
+  Checkbox,
 } from "@mui/material";
 import { fetchLists, createList, deleteList } from "../api/listApi";
 import {
@@ -49,6 +50,7 @@ export default function StepTodoList() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showTaskDeleteConfirm, setShowTaskDeleteConfirm] = useState(false);
   const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const currentTask = tasks[currentIndex];
 
@@ -97,12 +99,7 @@ export default function StepTodoList() {
 
   const handleBack = async () => {
     if (currentIndex > 0) {
-      const prevIndex = currentIndex - 1;
-      const updated = { ...tasks[prevIndex], completed: false };
-      await updateTask(updated, selectedListId);
-      const refreshed = await fetchTasks(selectedListId);
-      setTasks(refreshed);
-      setCurrentIndex(prevIndex);
+      setCurrentIndex(currentIndex - 1);
     }
   };
 
@@ -161,6 +158,10 @@ export default function StepTodoList() {
 
   const handleCancelEdit = () => {
     setIsEditing(false);
+  };
+
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
   };
 
   const completedCount = tasks.filter((t) => t.completed).length;
@@ -273,22 +274,45 @@ export default function StepTodoList() {
                     mb: 2,
                   }}
                 >
-                  {isEditing ? (
-                    <TextField
-                      fullWidth
-                      label="タイトルを編集"
-                      value={editTitle}
-                      onChange={(e) => setEditTitle(e.target.value)}
-                      sx={{ input: { color: "white" }, flex: 1, mr: 2 }}
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Checkbox
+                      checked={currentTask.completed}
+                      onChange={async (e) => {
+                        const updated = {
+                          ...currentTask,
+                          completed: e.target.checked,
+                        };
+                        await updateTask(updated, selectedListId);
+                        const refreshed = await fetchTasks(selectedListId);
+                        setTasks(refreshed);
+                      }}
+                      sx={{ mr: 1 }}
                     />
-                  ) : (
-                    <Typography
-                      variant="h5"
-                      sx={{ fontWeight: "bold", color: "primary.light" }}
-                    >
-                      📝 {currentTask.title}
-                    </Typography>
-                  )}
+                    {isEditing ? (
+                      <TextField
+                        fullWidth
+                        label="タイトルを編集"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        sx={{ input: { color: "white" }, flex: 1, mr: 2 }}
+                      />
+                    ) : (
+                      <Typography
+                        variant="h5"
+                        sx={{ fontWeight: "bold", color: "primary.light" }}
+                      >
+                        📝 {currentTask.title}{" "}
+                        {currentTask.completed && (
+                          <Typography
+                            variant="caption"
+                            sx={{ color: "success.main", ml: 1 }}
+                          >
+                            済
+                          </Typography>
+                        )}
+                      </Typography>
+                    )}
+                  </Box>
                   <Stack direction="row" spacing={1}>
                     {isEditing ? (
                       <>
