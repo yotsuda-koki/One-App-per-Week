@@ -28,6 +28,9 @@ import javafx.util.Duration;
 import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
+
 import org.json.JSONObject;
 
 public class MainApp extends Application {
@@ -47,15 +50,15 @@ public class MainApp extends Application {
     	Button toCountdownButton = new Button("Timer");
     	Button toGraphButton = new Button("Graph");
     	
-    	toStopwatchButton.setOnAction(e -> {
+    	toStopwatchButton.setOnAction(_ -> {
     		contentArea.getChildren().setAll(timerView);
     	});
     	
-    	toCountdownButton.setOnAction(e -> {
+    	toCountdownButton.setOnAction(_ -> {
     		contentArea.getChildren().setAll(countdownView);
     	});
     	
-    	toGraphButton.setOnAction(e -> {
+    	toGraphButton.setOnAction(_ -> {
     		contentArea.getChildren().setAll(createGraphView());
     	});
     	
@@ -151,15 +154,15 @@ public class MainApp extends Application {
     	Button stopButton = new Button("Stop");
     	Button resetButton = new Button("Reset");
     	
-    	timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+    	timeline = new Timeline(new KeyFrame(Duration.seconds(1), _ -> {
     		seconds++;
     		timeLabel.setText(formatTime(seconds));
     	}));
     	timeline.setCycleCount(Timeline.INDEFINITE);
     	
-    	startButton.setOnAction(e -> timeline.play());
-    	stopButton.setOnAction(e -> timeline.pause());
-    	resetButton.setOnAction(e -> {
+    	startButton.setOnAction(_ -> timeline.play());
+    	stopButton.setOnAction(_ -> timeline.pause());
+    	resetButton.setOnAction(_ -> {
     		timeline.stop();
     		saveTodayStudyTime(seconds);
     		seconds = 0;
@@ -181,7 +184,7 @@ public class MainApp extends Application {
     	final IntegerProperty remainingSeconds = new SimpleIntegerProperty(25 * 60);
     	Timeline countdown = new Timeline();
     	countdown.setCycleCount(Timeline.INDEFINITE);
-    	countdown.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
+    	countdown.getKeyFrames().add(new KeyFrame(Duration.seconds(1), _ -> {
     		int current = remainingSeconds.get();
     		if(current <= 1) {
     			countdown.stop();
@@ -211,7 +214,7 @@ public class MainApp extends Application {
     	}
     	timeSelect.setValue(25);
     	
-    	timeSelect.setOnAction(e -> {
+    	timeSelect.setOnAction(_ -> {
     		int selectedMinutes = timeSelect.getValue();
     		countdown.stop();
     		remainingSeconds.set(selectedMinutes * 60);
@@ -222,9 +225,9 @@ public class MainApp extends Application {
     	Button pause = new Button("Pause");
     	Button reset = new Button("Reset");
     	
-    	start.setOnAction(e -> countdown.play());
-    	pause.setOnAction(e -> countdown.pause());
-    	reset.setOnAction(e -> {
+    	start.setOnAction(_ -> countdown.play());
+    	pause.setOnAction(_ -> countdown.pause());
+    	reset.setOnAction(_ -> {
     		countdown.stop();
     		int selectedMinutes = timeSelect.getValue();
     		remainingSeconds.set(selectedMinutes * 60);
@@ -247,6 +250,61 @@ public class MainApp extends Application {
     	VBox graphView = new VBox(chart);
     	graphView.setStyle("-fx-alignment: center;");
     	return graphView;
+    }
+    
+    private VBox createSummaryView() {
+    	Label todayLabel = new Label("Today's time");
+    	Label weekLable = new Label("This week's time");
+    	Label monthLabel = new Label("This month's time");
+    	Label yearLabel = new Label("This year's time");
+    	
+    	int todaySec = 0, weekSec = 0, monthSec = 0, yearSec = 0;
+    	
+    	try {
+    		File file = new File("study-log.json");
+    		if(file.exists()) {
+    			BufferedReader reader = new BufferedReader(new FileReader(file));
+    			StringBuilder sb = new StringBuilder();
+    			String line;
+    			while((line = reader.readLine()) != null) sb.append(line);
+    			reader.close();
+    			
+    			JSONObject json = new JSONObject(sb.toString());
+    			
+    			LocalDate now = LocalDate.now();
+    			WeekFields weekFields = WeekFields.of(Locale.getDefault());
+    			int currentWeek = now.get(weekFields.weekOfWeekBasedYear());
+    			int currentMonth = now.getMonthValue();
+    			int currentYear = now.getYear();
+    			
+    			for(String key : json.keySet()) {
+    				LocalDate date = LocalDate.parse(key);
+    				int seconds = json.getInt(key);
+    				
+    				if(date.equals(now)) todaySec += seconds;
+    				if(date.getYear() == currentYear) {
+    					yearSec += seconds;
+    					if(date.getMonthValue() == currentMonth) {
+    						monthSec += seconds;
+    					}
+    					if(date.get(weekFields.weekOfWeekBasedYear()) == currentWeek) {
+    						weekSec += seconds;
+    					}
+    				}
+    			}
+    		}
+		}catch(Exception e) {
+    			e.printStackTrace();
+    	}
+    	
+    	todayLabel.setText("Today's time" + formatTime(todaySec));
+    	weekLable.setText("This week's time" + formatTime(weekSec));
+    	monthLabel.setText("This month's time" + formatTime(monthSec));
+    	yearLabel.setText("This year's time" + formatTime(yearSec));
+    	
+    	VBox layout = new VBox(10, todayLabel, weekLable, monthLabel, yearLabel);
+    	layout.setAlignment(Pos.CENTER);
+    	return layout;
     }
 
     public static void main(String[] args) {
