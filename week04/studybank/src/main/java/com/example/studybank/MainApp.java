@@ -48,9 +48,6 @@ public class MainApp extends Application {
     	StackPane contentArea = new StackPane();
     	
     	VBox timerView = createTimerView();
-//    	VBox countdownView = createCountdownTimerView();
-//    	VBox summary = createSummaryView();
-//    	VBox graphView = createGraphView();
     	
     	Button toStopwatchButton = new Button("Stop watch");
     	Button toCountdownButton = new Button("Timer");
@@ -308,7 +305,7 @@ public class MainApp extends Application {
             -fx-font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
             -fx-text-fill: #333;
         """);
-        
+
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
         xAxis.setLabel("Date");
@@ -317,49 +314,51 @@ public class MainApp extends Application {
 
         BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
         barChart.setLegendVisible(false);
-        barChart.setTitle("Study Time per Day");
         barChart.setPrefHeight(300);
-        barChart.setCategoryGap(10);
-        barChart.setBarGap(3);
+        barChart.setCategoryGap(50);
+        barChart.setBarGap(10);
 
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Study Time");
-        
         LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
         lineChart.setLegendVisible(false);
         lineChart.setCreateSymbols(false);
+        lineChart.setVerticalGridLinesVisible(false);
+        lineChart.setHorizontalGridLinesVisible(false);
         lineChart.setAlternativeRowFillVisible(false);
         lineChart.setAlternativeColumnFillVisible(false);
-        lineChart.setHorizontalGridLinesVisible(false);
-        lineChart.setVerticalGridLinesVisible(false);
         lineChart.setAnimated(false);
-        lineChart.setVerticalZeroLineVisible(false);
         lineChart.setHorizontalZeroLineVisible(false);
-        lineChart.setTitle(null);
+        lineChart.setVerticalZeroLineVisible(false);
+        lineChart.setStyle("-fx-background-color: rgba(255,255,255,0.3);");
+
         
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Study Time");
+
         XYChart.Series<String, Number> avgLine = new XYChart.Series<>();
+        avgLine.setName("Average");
 
         double totalMinutes = 0;
         int dataCount = 0;
         List<String> orderedDateStrings = new ArrayList<>();
-        
+
         try {
-        	File file = new File("study-log.json");
-        	if(file.exists()) {
-        		BufferedReader reader = new BufferedReader(new FileReader(file));
-        		StringBuilder sb = new StringBuilder();
-        		String line;
-        		while((line = reader.readLine()) != null) sb.append(line);
-        		reader.close();
-        		
-        		JSONObject json = new JSONObject(sb.toString());
-        		
-        		List<LocalDate> sortedDates = new ArrayList<>();
-        		for (String dateStr : json.keySet()) {
-        		    sortedDates.add(LocalDate.parse(dateStr));
-        		}
-        		Collections.sort(sortedDates);
-                
+            File file = new File("study-log.json");
+            if (file.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) sb.append(line);
+                reader.close();
+
+                JSONObject json = new JSONObject(sb.toString());
+
+                List<LocalDate> sortedDates = new ArrayList<>();
+                for (String dateStr : json.keySet()) {
+                    sortedDates.add(LocalDate.parse(dateStr));
+                }
+                Collections.sort(sortedDates);
+
                 for (LocalDate date : sortedDates) {
                     String dateStr = date.toString();
                     orderedDateStrings.add(dateStr);
@@ -370,51 +369,73 @@ public class MainApp extends Application {
                     dataCount++;
                 }
 
-                xAxis.setCategories(javafx.collections.FXCollections.observableArrayList(orderedDateStrings));
+                double avg = (dataCount > 0) ? totalMinutes / dataCount : 0;
 
-        		
-        		if(dataCount > 0) {
-        			double avg = totalMinutes / dataCount;
-        			for(LocalDate date : sortedDates) {
-        		        String dateStr = date.toString();
-        		        avgLine.getData().add(new XYChart.Data<>(dateStr, avg));
-        			}
-        		}
-        	}
-        }catch(Exception e) {
-        	e.printStackTrace();
+                for (String dateStr : orderedDateStrings) {
+                    avgLine.getData().add(new XYChart.Data<>(dateStr, avg));
+                }
+
+                xAxis.setCategories(javafx.collections.FXCollections.observableArrayList(orderedDateStrings));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        
+
         VBox graphView;
-        
-        if(dataCount == 0) {
-        	Label noDataLabel = new Label("No data");
+
+        if (dataCount == 0) {
+            Label noDataLabel = new Label("No data");
             noDataLabel.setStyle("""
-                    -fx-font-size: 16px;
-                    -fx-text-fill: #999;
-                    -fx-font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-                """);
+                -fx-font-size: 16px;
+                -fx-text-fill: #999;
+                -fx-font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            """);
             graphView = new VBox(20, title, noDataLabel);
         } else {
-        	barChart.getData().add(series);
-        	lineChart.getData().add(avgLine);
-        	
+            barChart.getData().add(series);
+            lineChart.getData().add(avgLine);
+
+            avgLine.nodeProperty().addListener((obs, oldNode, newNode) -> {
+                if (newNode != null) {
+                    newNode.setStyle("-fx-stroke: #212121; -fx-stroke-width: 3;");
+                }
+            });
+
+            series.nodeProperty().addListener((obs, oldNode, newNode) -> {
+                if (newNode != null) {
+                    newNode.setStyle("-fx-bar-fill: #1565c0;");
+                }
+            });
+            
+            lineChart.setMouseTransparent(true);
+            lineChart.setStyle("-fx-background-color: transparent;");
+            lineChart.setOpacity(0.8);
+
             StackPane chartStack = new StackPane(barChart, lineChart);
             graphView = new VBox(20, title, chartStack);
         }
-        
+
         graphView.setStyle("""
             -fx-alignment: center;
             -fx-padding: 40;
             -fx-background-color: #f5f5f5;
         """);
-        
+
         return graphView;
     }
+
     
     private VBox createSummaryView() {
+        Label title = new Label("Study Summary");
+        title.setStyle("""
+            -fx-font-size: 22px;
+            -fx-font-weight: bold;
+            -fx-font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            -fx-text-fill: #333;
+        """);
+        
     	Label todayLabel = new Label("Today's time");
-    	Label weekLable = new Label("This week's time");
+    	Label weekLabel = new Label("This week's time");
     	Label monthLabel = new Label("This month's time");
     	Label yearLabel = new Label("This year's time");
     	
@@ -457,13 +478,25 @@ public class MainApp extends Application {
     			e.printStackTrace();
     	}
     	
-    	todayLabel.setText("Today's time : " + formatTime(todaySec));
-    	weekLable.setText("This week's time : " + formatTime(weekSec));
-    	monthLabel.setText("This month's time : " + formatTime(monthSec));
-    	yearLabel.setText("This year's time : " + formatTime(yearSec));
+    	todayLabel.setText("Today : " + formatTime(todaySec));
+    	weekLabel.setText("This Week : " + formatTime(weekSec));
+    	monthLabel.setText("This Month : " + formatTime(monthSec));
+    	yearLabel.setText("This Year : " + formatTime(yearSec));
     	
-    	VBox layout = new VBox(10, todayLabel, weekLable, monthLabel, yearLabel);
+        String labelStyle = """
+                -fx-font-size: 16px;
+                -fx-text-fill: #333;
+                -fx-font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            """;
+        
+        todayLabel.setStyle(labelStyle);
+        weekLabel.setStyle(labelStyle);
+        monthLabel.setStyle(labelStyle);
+        yearLabel.setStyle(labelStyle);
+    	
+    	VBox layout = new VBox(10, todayLabel, weekLabel, monthLabel, yearLabel);
     	layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-padding: 40; -fx-background-color: #f5f5f5;");
     	return layout;
     }
 
