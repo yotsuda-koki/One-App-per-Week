@@ -58,7 +58,7 @@
 2. 実行時 VMオプションを付ける:
 
 ```bash
---module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.fxml,javafx.media
+--module-path /your/path/to/javafx/lib --add-modules javafx.controls,javafx.fxml,javafx.media
 ```
 
 3. `MainApp.java`を実行 (Eclipse)
