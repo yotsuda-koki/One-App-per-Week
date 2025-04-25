@@ -54,7 +54,7 @@
 
 ## 実行方法
 
-1. JDK 17以降 + JavaFX SDK をインストール
+1. JDK 24 + JavaFX SDK をインストール
 2. 実行時 VMオプションを付ける:
 
 ```bash
