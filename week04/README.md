@@ -45,7 +45,7 @@
 - Java 24
 - JavaFX 24
   - `javafx.controls`, `javafx.media` 使用
-- Eclipse (Runnable Jar Export)
+- Eclipse
 - JSON (ローカル保存)
 - `digital-7` フォント
 - `alarm.mp3` (タイマー通知音)
