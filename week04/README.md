@@ -37,14 +37,13 @@
 ## 注意事項
 
 - 外部APIやクラウドとは繋がらず、**完全にローカル動作**します
-- `.exe`化して配布する場合は `jpackage`を使用
 
 ---
 
 ## 開発環境 / 技術
 
-- Java 17+
-- JavaFX 21+
+- Java 24
+- JavaFX 24
   - `javafx.controls`, `javafx.media` 使用
 - Eclipse (Runnable Jar Export)
 - JSON (ローカル保存)
