@@ -10,6 +10,7 @@
 | 1  | 2025/03/31〜04/06 | Tetris | テトリス風ゲームアプリ | Java + libGDX |
 | 2  | 2025/04/07〜04/13 | AnkiTango | 単語翻訳アプリ | Kotlin + Jetpack Compose + 外部API連携 |
 | 3  | 2025/04/14〜04/20 | StepTodo | ステップ型のToDo管理 | Spring Boot + React |
+| 4  | 2025/04/21〜04/27 | StudyBank | 勉強時間計測アプリ | Javafx |
 
 ## 目的
 - 毎週アウトプットする習慣をつける
