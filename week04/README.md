@@ -20,8 +20,8 @@
 
 ## 使い方
 
-1. Java (JDK 17以降)と JavaFX SDK をインストール
-2. Eclipse または CLI で `MainApp.java` を実行
+1. Java (JDK 24)と JavaFX SDK をインストール
+2. Eclipse で `MainApp.java` を実行
 3. 各画面 (ストップウォッチ / タイマー / グラフ / 統計) をボタンで切り替え
 4. 終了時に `study-log.json`に自動記録
 5. グラフと統計で日々の積み上げを確認
