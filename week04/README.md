@@ -66,7 +66,7 @@
 
 ---
 
-## 📅 作成者
+## 作成者
 
 このアプリは「1週間に1個アプリを作る」チャレンジの week04 として開発されました。  
 GitHub リポジトリ: [One-App-per-Week/week04](https://github.com/yourname/One-App-per-Week/tree/main/week04)
