@@ -49,10 +49,24 @@ public class MainApp extends Application {
     	
     	VBox timerView = createTimerView();
     	
+    	String navBtnStyle = """
+    		    -fx-background-color: #4caf50;
+    		    -fx-text-fill: white;
+    		    -fx-font-size: 14px;
+    		    -fx-font-weight: bold;
+    		    -fx-pref-width: 120px;
+    		    -fx-font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    		""";
+    	
     	Button toStopwatchButton = new Button("Stop watch");
     	Button toCountdownButton = new Button("Timer");
     	Button toGraphButton = new Button("Graph");
     	Button toSummaryButton = new Button("Summary");
+    	
+    	toStopwatchButton.setStyle(navBtnStyle);
+    	toCountdownButton.setStyle(navBtnStyle);
+    	toGraphButton.setStyle(navBtnStyle);
+    	toSummaryButton.setStyle(navBtnStyle);
     	
     	toStopwatchButton.setOnAction(_ -> {
     		contentArea.getChildren().setAll(createTimerView());
@@ -71,7 +85,11 @@ public class MainApp extends Application {
     	});
     	
     	HBox navBar = new HBox(10, toStopwatchButton, toCountdownButton, toGraphButton, toSummaryButton);
-    	navBar.setStyle("-fx-alignment: center; -fx-padding: 10;");
+    	navBar.setAlignment(Pos.CENTER);
+    	navBar.setStyle("""
+    	    -fx-padding: 10;
+    	    -fx-background-color: #e0e0e0;
+    	""");
     	
     	VBox root = new VBox(navBar, contentArea);
     	root.setStyle("-fx-padding: 20;");
@@ -307,10 +325,20 @@ public class MainApp extends Application {
         """);
 
         CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Date");
-        yAxis.setLabel("Study Time (min)");
-        xAxis.setTickLabelRotation(45);
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Study Time");
+        
+        double maxValue = series.getData().stream()
+        	    .mapToDouble(data -> data.getYValue().doubleValue())
+        	    .max()
+        	    .orElse(10);
+
+    	NumberAxis yAxis = new NumberAxis();
+    	yAxis.setLabel("Study Time (min)");
+    	yAxis.setAutoRanging(false);
+    	yAxis.setLowerBound(0);
+    	yAxis.setUpperBound(Math.ceil(maxValue * 1.2));
+    	yAxis.setTickUnit(1);
 
         BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
         barChart.setLegendVisible(false);
@@ -329,11 +357,6 @@ public class MainApp extends Application {
         lineChart.setHorizontalZeroLineVisible(false);
         lineChart.setVerticalZeroLineVisible(false);
         lineChart.setStyle("-fx-background-color: rgba(255,255,255,0.3);");
-
-        
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Study Time");
 
         XYChart.Series<String, Number> avgLine = new XYChart.Series<>();
         avgLine.setName("Average");
@@ -397,7 +420,7 @@ public class MainApp extends Application {
 
             avgLine.nodeProperty().addListener((obs, oldNode, newNode) -> {
                 if (newNode != null) {
-                    newNode.setStyle("-fx-stroke: #212121; -fx-stroke-width: 3;");
+                    newNode.setStyle("-fx-stroke: #212121; -fx-stroke-width: 2;");
                 }
             });
 
