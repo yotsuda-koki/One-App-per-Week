@@ -1,0 +1,129 @@
+body {
+  font-family: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #eef1f4;
+  color: #212529;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  color: #003366;
+}
+
+h2 {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.3em;
+  margin-bottom: 1.5em;
+}
+
+form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+button,
+.btn {
+  font-weight: 500;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.nav-link {
+  color: #003366 !important;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+footer {
+  font-size: 0.9em;
+  color: #6c757d;
+}
+
+.btn-custom {
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #003366;
+  border: 1px solid #002244;
+  padding: 0.5rem 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: #ffffff;
+  color: #003366;
+  border-color: #003366;
+}
+
+.serif {
+  font-family: "Merriweather", Georgia, "Times New Roman", serif;
+  color: #dce3f0;
+}
+
+.serif-black {
+  font-family: "Merriweather", Georgia, "Times New Roman", serif;
+  color: #1a1a1a;
+}
+
+.about-hero h1,
+.about-hero p {
+  font-family: "Merriweather", Georgia, serif;
+  color: #dce3f0;
+}
+
+.about-hero {
+  background-color: #001f3f;
+}
+
+.serif {
+  font-family: "Merriweather", Georgia, serif;
+}
+
+.list-group-item {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+}
+
+.border-primary {
+  border-color: #003366 !important;
+}
+
+.list-group-formal .list-group-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.8rem 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background-color: #fdfdfd;
+  border: none;
+  border-top: 1px dotted #ccc;
+}
+
+.list-group-formal .list-group-item:first-child {
+  border-top: none;
+}
+
+.list-group-formal .label {
+  width: 140px;
+  font-weight: 600;
+  color: #003366;
+  flex-shrink: 0;
+}
+
+.list-group-formal .value {
+  flex: 1;
+}
+
+.label {
+  text-transform: uppercase;
+  font-family: "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.5px;
+}
